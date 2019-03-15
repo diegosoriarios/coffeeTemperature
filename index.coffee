@@ -8,8 +8,8 @@ pais = ''
 rl = readline.createInterface(
     input: process.stdin
     output: process.stdout)
-rl.question 'Qual cidade ', (answer) ->
-    cidade = answer.toLowerCase()
+rl.question 'Digite a cidade ', (answer) ->
+    cidade = capitalizeFirstLetter(answer)
     fetchingData(cidade)
     rl.close()
     return
@@ -21,6 +21,20 @@ fetchingData = (cidade, pais) ->
             console.log 'error:', err
         else
             weather = JSON.parse(body)
-            console.log "#{cidade}-BR"
-            console.log "Temp: #{weather.list[0].main.temp} | Clima: #{weather.list[0].weather[0].description}"
+            console.log '[36m%s[0m', "#{cidade}-BR"
+            console.log "Temp:", getColor(weather.list[0].main.temp), " #{weather.list[0].main.temp}",  "\x1b[0m", "| Clima: ", "\x1b[32m", "#{weather.list[0].weather[0].description}", "\x1b[0m"
         return
+
+capitalizeFirstLetter = (string) ->
+  string.charAt(0).toUpperCase() + string.slice(1)
+  return string
+
+getColor = (temp) ->
+    if temp < 10.0
+        color = "\x1b[34m"
+    else
+        if temp < 20.0
+            color = "\x1b[33m"
+        else
+            color = "\x1b[31m"
+    return color
